@@ -17,7 +17,7 @@
 - NL-Means的全称是：Non-Local Means，直译过来是**非局部平均**，在2005年由Baudes提出，该算法使用自然图像中普遍存在的冗余信息来去噪声。与常用的双线性滤波、中值滤波等利用图像局部信息来滤波不同的是，它利用了整幅图像来进行去噪，以图像块为单位在图像中寻找相似区域，再对这些区域求平均，能够比较好地去掉图像中存在的高斯噪声。
 - 通常的CNN网络模拟人的认知过程，在网络的相邻两层之间使用局部连接来获取图像的局部特性，一般认为人对外界的认知是从局部到全局的，而图像的空间联系也是局部的像素联系较为紧密，而距离较远的像素相关性则较弱。因而，每个神经元其实没有必要对全局图像进行感知，只需要对局部进行感知，然后在更高层将局部的信息综合起来就得到了全局的信息。网络部分连通的思想，也是受启发于生物学里面的视觉系统结构，底层的去捕捉轮廓信息，中层的组合轮廓信息，高层的组合全局信息，最终不同的全局信息最终被综合，**但由于采样以及信息逐层传递损失了大量信息，所以传统cnn在全局信息捕捉上存在局限性**。
 
-![img](readme/Non-local-Neural-Networks-示意图-02.png)
+![1547189580280](readme/Non-local-Neural-Networks-示意图-02.png)
 
 - 而在处理视频等序列化数据时，传统cnn的这种局限性就显得尤为严重了。比如在记录一场网球比赛的视频中，每一帧都能很容易的检测到他的手握拍在哪，一个卷积核就能覆盖位置也就是手腕周围的区域。
 - 但是为了识别挥拍这个动作，仅仅关注手腕周围的信息是不够的，我们需要了解到人的手腕跟他的胳膊、肩膀、膝盖以及脚发生了哪些一系列的相对位移才能判断出挥拍动作。这些信息是将网球区别于其他运动的重要信息，因为静止来看运动员都拿着拍子站在那而已。而这些重要的全局位移信息很难被关注局部的卷积核收集到。
@@ -29,7 +29,7 @@
 * convolution和recurrent都是对局部区域进行的操作，所以它们是典型的local operations。受计算机视觉中经典的非局部均值（non-local means）的启发，本文提出一种non-local operations用于捕获长距离依（long-range dependencies），即如何建立图像上两个有一定距离的像素之间的联系，如何建立视频里两帧的联系，如何建立一段话中不同词的联系等。 
 * non-local operations在计算某个位置的响应时，是考虑所有位置features的加权——所有位置可以是空间的，时间的，时空的。这个结构可以被插入到很多计算机视觉结构中，在视频分类的任务上，non-local模型在Kinetics和Charades上都达到了最好的结果。在图像识别的任务上，non-local模型提高了COCO上物体检测／物体分割／姿态估计等任务的结果。
 
-![img](readme/Non-local-Neural-Networks-示意图.png)
+![1547189607001](readme/Non-local-Neural-Networks-示意图.png)
 
 ### 优点
 
@@ -41,7 +41,7 @@
 
 （c）最后，他们的非局部运算能够维持可变输入的大小，并且能很方便地与其他运算（比如实验中使用的卷积运算）相组合。
 
-![img](readme/Non-local-Neural-Networks-好处.png)
+![1547189662318](readme/Non-local-Neural-Networks-网络.png)
 
 - “我们展示了非局部运算在视频分类应用中的有效性。在视频中，分隔开的像素在空间和时间上都会发生长时交互（long-range interaction）。我们的基本单元，也即单一的一个非局部模块，可以以前向传播的方式直接获取这些时空记忆。增加了几个非局部模块后，我们的“非局部神经网络”结构能比二维和三维卷积网络在视频分类中取得更准确的结果。另外，非局部神经网络在计算上也比三维卷积神经网络更加经济。我们在 Kinetics 和 Charades 数据集上做了全面的对比研究。我们的方法仅使用 RGB 数据，不使用任何高级处理（例如光流、多尺度测试），就取得了与这两个数据集上竞赛冠军方法相当乃至更好的结果。”
 
@@ -102,7 +102,7 @@
 
 * 为了处理这些全局动作信息，文章借鉴NL-Means中利用整幅图去噪的思想。前面讲到 NL-Means利用了整幅图像来进行去噪，以图像块为单位在图像中寻找相似区域，再对这些区域求平均，它的滤波过程可以用下面公式来表示：
 
-![img](readme/Non-local-Neural-Networks-non-local-操作.png)
+  ![1547191603450](readme/Non-local-Neural-Networks-non-local-操作.png)
 
 在这个公式中，w(x,y)是一个权重，表示在原始图像中，像素 x和像素 y 的相似度。这个权重要大于0，同时，权重的和为1。
 
@@ -110,7 +110,7 @@
 
 类似的，该文章定义了一个用于处理当前动作点与全局所有信息关系的函数
 
-![img](readme/Non-local-Neural-Networks-non-local-操作-02.png)
+![1547191644688](readme/Non-local-Neural-Networks-non-local-操作-02.png)
 
 这里x是输入信号，也是和x尺寸一样的输出信号，i代表时间空间上的输出位置索引，j代表全图中所有可能位置的枚举索引。函数f(x_i, x_j)计算位置i和j的权重。函数g用来计算j位置输入信号的一个表示。文章中的Non-Local操作就是考虑了图像中的所有可能位置j。
 
@@ -120,29 +120,29 @@
 
 1. **Gaussian**
 
-![img](readme/Non-local-Neural-Networks-non-local-操作-03.png)
+![1547191672184](readme/Non-local-Neural-Networks-non-local-操作-03.png)
 
-2.  **Embedded Gaussian**
+2. **Embedded Gaussian**
 
-![img](readme/Non-local-Neural-Networks-non-local-操作-04.png)
+   ![1547191692455](readme/Non-local-Neural-Networks-non-local-操作-04.png)
 
 3. **Dot product**
 
-![img](readme/Non-local-Neural-Networks-non-local-操作-05.png)
+![1547191713150](readme/Non-local-Neural-Networks-non-local-操作-05.png)
 
 **4.     Concatenation**
 
-![img](readme/Non-local-Neural-Networks-non-local-操作-06.png)
+![1547191745183](readme/Non-local-Neural-Networks-non-local-操作-06.png)
 
 ### 非局部模块（Non-local Block）
 
 * 文章中还定义了Non-local Block，也就是把前面的这种Non-local操作封装起来作为一个模块可以很方便的用在现有的框架中。
 
-  ![img](readme/Non-local-Neural-Networks-non-local-block.png)
+  ![1547191764582](readme/Non-local-Neural-Networks-non-local-block.png)
 
 这里y_i就是公式(1)中的输出结果。“+x_i”表示残差连接。残差连接是何恺明在他的2016年CVPR最佳论文中提出的。这个残差连接使得我们可以将这个Non-local Block很方便的插入已有的预训练模型中，而不会破坏模型原有的操作。
 
-![img](readme/Non-local-Neural-Networks-好处.png)
+![img](readme/Non-local-Neural-Networks-网络.png)
 
 上图是一个Non-local Block的例子。特征图尺寸为T×H×W×1024 也就是有 1024 个通道。 f函数采用的是公式3中的Embedded Gaussian。蓝色框表示1×1×1 的卷积操作，这种结构为512通道的“瓶颈”(bottleneck)结构。
 
@@ -156,7 +156,7 @@
 
 视频的基线模型是 ResNet-50 C2D。三维输出映射和滤波核的尺寸用T×H×W 表示（二维核则为 H×W），后面的数字代表通道数。输入是32×224×224。方括号里的是残差模块
 
-![img](readme/Non-local-Neural-Networks-实验结果.png)
+![1547191788119](readme/Non-local-Neural-Networks-实验结果.png)
 
 （c）展示了将非局部模块加入 C2D 基线后的结果，实验中用到了50层和101层的ResNet，可以看出，总体而言，增加的非局部模块越多，最后的精度越高。
 
@@ -164,21 +164,21 @@
 
 （e）对比了非局部模块和三维卷积神经网络，增加了非局部模块（5个）的效果要好一点点。
 
-![img](readme/Non-local-Neural-Networks-参数对比.png)
+![1547191828110](readme/Non-local-Neural-Networks-参数对比.png)
 
 （f）将非局部与三维卷积相结合的效果，结合了比单纯的三维卷积更好。
 
 （g）检验了在128帧的视频中（f）中的模型的效果，发现能够保持比较稳定。
 
-![img](readme/Non-local-Neural-Networks-实验结果-02.png)
+![1547191842967](readme/Non-local-Neural-Networks-实验结果-02.png)
 
 最后，下面这张图展示了将非局部模块与 Mask R-CNN 结合后，在 COCO 物体检测、实例分割以及人体关键点检测任务中性能均有所提升，使用了50和100层的ResNet，以及152层的ResNeXt。
 
-![img](readme/Non-local-Neural-Networks-实验结果-03.png)
+![1547191865431](readme/Non-local-Neural-Networks-实验结果-03.png)
 
 ## why （为什么好）
 
-![这里写图片描述](readme/Non-local-Neural-Networks-non-local-why.png)
+![1547191883288](readme/Non-local-Neural-Networks-non-local-why.png)
 
 * **f的表现形式的影响**。表2a比较了不同的non-local block的形式插入到C2D得到的结果（插入位置在res4的最后一个residual block之前）。发现即使只加一个non-local block都能得到~1%的提高。 
   有意思的是不同的non-local block的形式效果差不多，说明是non-local block的结构在起作用，而对具体的表达方式不敏感。本文后面都采用embedded Gaussian进行实验，因为这个版本有softmax，可以直接给出[0,1]之间的scores。
